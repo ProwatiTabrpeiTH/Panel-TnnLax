@@ -1,0 +1,162 @@
+<!DOCTYPE html><html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel TnnLax</title><style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#111;
+transition:.3s;
+}
+
+.light{
+background:#f2f2f2;
+}
+
+.dark{
+background:#111;
+}
+
+.card{
+width:360px;
+padding:20px;
+border-radius:20px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(15px);
+border:1px solid rgba(255,255,255,.2);
+color:white;
+box-shadow:0 0 20px rgba(0,0,0,.4);
+}
+
+.light .card{
+background:white;
+color:black;
+}
+
+.rgb{
+font-size:28px;
+font-weight:bold;
+text-align:center;
+animation:rgb 3s linear infinite;
+margin-bottom:20px;
+}
+
+@keyframes rgb{
+0%{color:red}
+20%{color:orange}
+40%{color:yellow}
+60%{color:lime}
+80%{color:cyan}
+100%{color:magenta}
+}
+
+input,select{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+outline:none;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:15px;
+border:none;
+border-radius:10px;
+background:#00aaff;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+.panel{
+display:none;
+}
+
+.menu{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin:12px 0;
+padding:12px;
+border-radius:12px;
+background:rgba(255,255,255,.1);
+}
+
+.light .menu{
+background:#ececec;
+}
+
+.switch{
+width:50px;
+height:25px;
+}
+
+.range{
+width:120px;
+}
+
+.status{
+margin-top:10px;
+text-align:center;
+font-weight:bold;
+}
+
+.credit{
+text-align:center;
+margin-top:15px;
+opacity:.8;
+}
+</style></head><body class="dark"><div class="card" id="loginBox"><div class="rgb">Panel TnnLax</div><select id="theme">
+<option value="dark">🌙 ธีมดำ</option>
+<option value="light">☀️ ธีมขาว</option>
+</select><input type="text" placeholder="Username (อะไรก็ได้)">
+<input type="password" placeholder="Password (อะไรก็ได้)">
+<input type="text" id="code" placeholder="Unlock Code"><button onclick="login()">เข้าสู่ระบบ</button>
+
+<div class="status" id="msg"></div></div><div class="card panel" id="panelBox"><div class="rgb">Panel TnnLax</div><div class="menu">
+<span>Aim Assist (UI Demo)</span>
+<input class="range" type="range" min="1" max="100" value="50">
+</div><div class="menu">
+<span>Precision Level</span>
+<input class="range" type="range" min="1" max="100" value="50">
+</div><div class="menu">
+<span>Performance Boost</span>
+<input class="switch" type="checkbox">
+</div><div class="menu">
+<span>Dark Protection</span>
+<input class="switch" type="checkbox">
+</div><div class="menu">
+<span>Safe Mode</span>
+<input class="switch" type="checkbox">
+</div><div class="credit">
+Panel TnnLax v1.0
+</div></div><script>
+function login(){
+
+const code=document.getElementById("code").value.trim();
+const theme=document.getElementById("theme").value;
+
+document.body.className=theme;
+
+if(code==="TNN1"){
+document.getElementById("loginBox").style.display="none";
+document.getElementById("panelBox").style.display="block";
+}else{
+document.getElementById("msg").innerHTML="❌ Unlock Code ไม่ถูกต้อง";
+}
+}
+</script></body>
+        </html>
