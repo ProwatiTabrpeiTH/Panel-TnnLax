@@ -1,162 +1,1124 @@
-<!DOCTYPE html><html lang="th">
+<!DOCTYPE html>
+<html lang="th">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel TnnLax</title><style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
+<title>VerySong HUD Premium V1.0</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Sarabun:wght@300;400;600;700&display=swap');
+
+  :root {
+    --bg-deep: #040d1a;
+    --bg-card: #071528;
+    --bg-card2: #0a1c35;
+    --accent: #00e5ff;
+    --accent2: #00b4d8;
+    --accent-glow: rgba(0,229,255,0.3);
+    --gold: #ffd700;
+    --red: #ff3355;
+    --green: #00ff88;
+    --purple: #a855f7;
+    --border: rgba(0,229,255,0.2);
+    --text: #cce7f5;
+    --text-dim: #5a8099;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg-deep);
+    font-family: 'Sarabun', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== LOGIN OVERLAY ===== */
+  #loginOverlay {
+    position: fixed; inset: 0;
+    background: linear-gradient(135deg, #020b18 0%, #040d1a 50%, #071020 100%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .login-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px 32px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 0 40px rgba(0,229,255,0.15), 0 0 80px rgba(0,100,180,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .login-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .login-logo {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .login-logo .brand {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px var(--accent-glow);
+    line-height: 1.3;
+  }
+
+  .login-logo .sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    letter-spacing: 3px;
+  }
+
+  .login-logo .by {
+    font-size: 11px;
+    color: var(--gold);
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  .login-field {
+    margin-bottom: 16px;
+  }
+
+  .login-field label {
+    display: block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .login-field input {
+    width: 100%;
+    background: rgba(0,229,255,0.05);
+    border: 1px solid rgba(0,229,255,0.25);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s;
+  }
+
+  .login-field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(0,229,255,0.2);
+  }
+
+  .login-field input::placeholder { color: var(--text-dim); }
+
+  #loginError {
+    color: var(--red);
+    font-size: 12px;
+    text-align: center;
+    margin-bottom: 12px;
+    min-height: 18px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .btn-login {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #0077aa, #00b4d8);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 20px rgba(0,180,216,0.3);
+  }
+
+  .btn-login:hover {
+    background: linear-gradient(135deg, #0099cc, #00e5ff);
+    box-shadow: 0 4px 30px rgba(0,229,255,0.4);
+    transform: translateY(-1px);
+  }
+
+  /* ===== MAIN PANEL ===== */
+  #mainPanel { display: none; }
+
+  .panel-header {
+    background: linear-gradient(180deg, #071528 0%, #040d1a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px 12px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+  }
+
+  .header-brand {
+    font-family: 'Orbitron', monospace;
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-shadow: 0 0 20px rgba(0,229,255,0.5);
+    line-height: 1.4;
+  }
+
+  .header-version {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 4px;
+    margin-top: 2px;
+  }
+
+  .header-by {
+    font-size: 10px;
+    color: var(--gold);
+    margin-top: 3px;
+    font-weight: 600;
+  }
+
+  /* ===== TABS ===== */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    padding: 16px 16px 0;
+    overflow-x: auto;
+  }
+
+  .tabs::-webkit-scrollbar { height: 3px; }
+  .tabs::-webkit-scrollbar-track { background: transparent; }
+  .tabs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .tab-btn {
+    flex: 0 0 auto;
+    padding: 10px 18px;
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: 8px 8px 0 0;
+    color: var(--text-dim);
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tab-btn.active {
+    background: var(--accent);
+    color: var(--bg-deep);
+    border-color: var(--accent);
+    box-shadow: 0 0 16px rgba(0,229,255,0.4);
+  }
+
+  .tab-btn:hover:not(.active) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ===== TAB CONTENT ===== */
+  .tab-content { display: none; padding: 16px; }
+  .tab-content.active { display: block; }
+
+  /* ===== SECTION ===== */
+  .section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(180deg, var(--accent), transparent);
+    border-radius: 12px 0 0 12px;
+  }
+
+  .section-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-left: 8px;
+  }
+
+  /* ===== TOGGLE ROW ===== */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,229,255,0.07);
+  }
+
+  .toggle-row:last-child { border-bottom: none; }
+
+  .toggle-info { flex: 1; }
+
+  .toggle-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .toggle-tag {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-left: 8px;
+    vertical-align: middle;
+    letter-spacing: 1px;
+  }
+
+  .tag-green { background: rgba(0,255,136,0.15); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+  .tag-red { background: rgba(255,51,85,0.15); color: var(--red); border: 1px solid rgba(255,51,85,0.3); }
+  .tag-cyan { background: rgba(0,229,255,0.15); color: var(--accent); border: 1px solid rgba(0,229,255,0.3); }
+  .tag-purple { background: rgba(168,85,247,0.15); color: var(--purple); border: 1px solid rgba(168,85,247,0.3); }
+  .tag-gold { background: rgba(255,215,0,0.15); color: var(--gold); border: 1px solid rgba(255,215,0,0.3); }
+
+  /* ===== CUSTOM TOGGLE ===== */
+  .toggle-switch {
+    position: relative;
+    width: 52px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 28px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 20px; height: 20px;
+    left: 3px; top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: all 0.3s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  }
+
+  input:checked + .toggle-slider {
+    background: rgba(0,229,255,0.2);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(0,229,255,0.3);
+  }
+
+  input:checked + .toggle-slider::before {
+    transform: translateX(24px);
+    background: var(--accent);
+  }
+
+  /* ===== SLIDER ROW ===== */
+  .slider-row {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,229,255,0.07);
+  }
+
+  .slider-row:last-child { border-bottom: none; }
+
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .slider-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .slider-value {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    color: var(--accent);
+    background: rgba(0,229,255,0.1);
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(0,229,255,0.25);
+    min-width: 58px;
+    text-align: center;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: rgba(0,229,255,0.15);
+    border-radius: 6px;
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,229,255,0.5);
+    border: 2px solid var(--bg-deep);
+  }
+
+  /* ===== SELECT ===== */
+  .select-field {
+    width: 100%;
+    background: rgba(0,229,255,0.05);
+    border: 1px solid rgba(0,229,255,0.25);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14px;
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 6 5-6' stroke='%2300e5ff' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+  }
+
+  .select-field option { background: #071528; color: #cce7f5; }
+
+  /* ===== DPI DISPLAY ===== */
+  .dpi-display {
+    text-align: center;
+    margin: 10px 0;
+  }
+
+  .dpi-number {
+    font-family: 'Orbitron', monospace;
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(0,229,255,0.5);
+    letter-spacing: 4px;
+    line-height: 1;
+  }
+
+  .dpi-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 4px;
+    margin-top: 4px;
+  }
+
+  /* ===== AIM HELPER ===== */
+  .aim-helper-section { margin-bottom: 14px; }
+
+  .aim-level-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .aim-level-btn {
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .aim-level-btn.selected {
+    border-color: var(--accent);
+    background: rgba(0,229,255,0.1);
+    box-shadow: 0 0 16px rgba(0,229,255,0.25);
+  }
+
+  .aim-level-btn .mannequin {
+    width: 48px;
+    height: 80px;
+    margin: 0 auto 8px;
+    position: relative;
+  }
+
+  .aim-level-btn .lv-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--accent2);
+    letter-spacing: 1px;
+  }
+
+  .aim-level-btn .lv-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 3px;
+    line-height: 1.3;
+  }
+
+  .aim-level-btn.selected .lv-label { color: var(--accent); }
+  .aim-level-btn.selected .lv-desc { color: var(--text); }
+
+  /* ===== MANNEQUIN SVG ===== */
+  .mannequin-svg { width: 48px; height: 80px; }
+
+  /* ===== AIM SLIDER ===== */
+  .aim-helper-slider .slider-value { background: rgba(255,51,85,0.1); color: var(--red); border-color: rgba(255,51,85,0.3); }
+  .aim-helper-slider input[type="range"] { background: rgba(255,51,85,0.2); }
+  .aim-helper-slider input[type="range"]::-webkit-slider-thumb {
+    background: var(--red);
+    box-shadow: 0 0 10px rgba(255,51,85,0.5);
+  }
+
+  /* ===== ENTER GAME BTN ===== */
+  .btn-enter-game {
+    display: block;
+    width: 100%;
+    padding: 18px;
+    margin: 16px 0 8px;
+    background: linear-gradient(135deg, #003a6e, #0077aa, #00b4d8);
+    border: 1px solid rgba(0,229,255,0.4);
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 30px rgba(0,150,200,0.3);
+    line-height: 1.5;
+  }
+
+  .btn-enter-game:hover {
+    box-shadow: 0 6px 40px rgba(0,229,255,0.4);
+    transform: translateY(-2px);
+  }
+
+  .btn-enter-game span { display: block; font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 3px; font-family: 'Sarabun', sans-serif; font-weight: 400; letter-spacing: 1px; }
+
+  /* ===== SHIELD STATUS ===== */
+  .shield-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 4px;
+  }
+
+  .status-item { flex: 1; text-align: center; }
+
+  .status-key {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .status-val {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .status-val.low { color: var(--green); text-shadow: 0 0 12px rgba(0,255,136,0.4); }
+  .status-val.pct { color: var(--accent); text-shadow: 0 0 12px rgba(0,229,255,0.4); }
+
+  .status-divider { width: 1px; height: 40px; background: var(--border); }
+
+  /* ===== TOAST ===== */
+  #toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--bg-card);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    z-index: 9000;
+    transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    box-shadow: 0 4px 30px rgba(0,229,255,0.2);
+    white-space: nowrap;
+  }
+
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 400px) {
+    .header-brand { font-size: 12px; }
+    .tab-btn { padding: 8px 12px; font-size: 9px; }
+    .dpi-number { font-size: 34px; }
+    .aim-level-grid { gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN OVERLAY ===== -->
+<div id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="brand">VerySong HUD<br>Premium V1.0</div>
+      <div class="sub">● PANEL SYSTEM ●</div>
+      <div class="by">By Prowati_TabrpeiTH</div>
+    </div>
+    <div class="login-field">
+      <label>USERNAME</label>
+      <input type="text" id="inputUser" placeholder="Enter username" autocomplete="off">
+    </div>
+    <div class="login-field">
+      <label>PASSWORD</label>
+      <input type="password" id="inputPass" placeholder="Enter password">
+    </div>
+    <div class="login-field">
+      <label>UNLOCK CODE</label>
+      <input type="text" id="inputCode" placeholder="Enter unlock code" autocomplete="off" style="letter-spacing:2px;">
+    </div>
+    <div id="loginError">&nbsp;</div>
+    <button class="btn-login" onclick="doLogin()">ENTER PANEL</button>
+  </div>
+</div>
+
+<!-- ===== MAIN PANEL ===== -->
+<div id="mainPanel">
+
+  <div class="panel-header">
+    <div class="header-brand">VerySong HUD Premium V1.0</div>
+    <div class="header-version">● PANEL SYSTEM V1.0 ●</div>
+    <div class="header-by">By Prowati_TabrpeiTH</div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('gameplay', this)">⚙ GAMEPLAY</button>
+    <button class="tab-btn" onclick="switchTab('aimhelper', this)">🎯 AIM HELPER</button>
+    <button class="tab-btn" onclick="switchTab('protect', this)">🛡 PROTECT</button>
+  </div>
+
+  <!-- ===== GAMEPLAY TAB ===== -->
+  <div id="tab-gameplay" class="tab-content active">
+
+    <!-- PERFORMANCE -->
+    <div class="section">
+      <div class="section-title">▌ PERFORMANCE</div>
+
+      <div class="slider-row">
+        <div class="slider-header">
+          <span class="slider-label">ดูดหัว</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="toggle-tag tag-cyan">100%</span>
+            <span class="slider-value" id="val-headsnap">70%</span>
+          </div>
+        </div>
+        <input type="range" min="1" max="100" value="70" oninput="updateSlider('headsnap',this.value)">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-header">
+          <span class="slider-label">ช่วยลาก</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="toggle-tag tag-cyan">100</span>
+            <span class="slider-value" id="val-drag">50%</span>
+          </div>
+        </div>
+        <input type="range" min="1" max="100" value="50" oninput="updateSlider('drag',this.value)">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-header">
+          <span class="slider-label">จอไว</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="toggle-tag tag-cyan">100%</span>
+            <span class="slider-value" id="val-screen">70%</span>
+          </div>
+        </div>
+        <input type="range" min="1" max="100" value="70" oninput="updateSlider('screen',this.value)">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-header">
+          <span class="slider-label">ล็อก</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="toggle-tag tag-cyan">100%</span>
+            <span class="slider-value" id="val-lock">70%</span>
+          </div>
+        </div>
+        <input type="range" min="1" max="100" value="70" oninput="updateSlider('lock',this.value)">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-header">
+          <span class="slider-label">แก้หน่วง</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="toggle-tag tag-cyan">100%</span>
+            <span class="slider-value" id="val-lag">30%</span>
+          </div>
+        </div>
+        <input type="range" min="1" max="100" value="30" oninput="updateSlider('lag',this.value)">
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-header">
+          <span class="slider-label">ยิงตัวขึ้นหัว</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="toggle-tag tag-red">100%</span>
+            <span class="slider-value" id="val-headshot">50%</span>
+          </div>
+        </div>
+        <input type="range" min="1" max="100" value="50" oninput="updateSlider('headshot',this.value)">
+      </div>
+
+    </div>
+
+    <!-- EXTRA FEATURES -->
+    <div class="section">
+      <div class="section-title">▌ EXTRA FEATURES</div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-label">ล็อกตัว</span>
+          <span class="toggle-tag tag-gold">เฉพาะสไน</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="tog-bodylock">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-label">กินเห็ดอัตโนมัติ</span>
+          <span class="toggle-tag tag-green">AUTO</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="tog-automush">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-label">วาปหาเห็ดอัตโนมัติ</span>
+          <span class="toggle-tag tag-purple">AUTO</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="tog-teleport">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+    </div>
+
+    <!-- DEVICE MODEL -->
+    <div class="section">
+      <div class="section-title">▌ DEVICE MODEL</div>
+      <div style="font-size:13px;color:var(--text-dim);margin-bottom:10px;">เลือกรุ่นโทรศัพท์</div>
+      <select class="select-field" id="deviceSelect">
+        <option value="">— SELECT DEVICE —</option>
+        <optgroup label="── Xiaomi / Redmi ──">
+          <option>Redmi Note 14</option>
+          <option>Redmi Note 14 Pro</option>
+          <option>Redmi Note 14 Pro+</option>
+          <option>Redmi Note 13 Pro</option>
+          <option>Redmi Note 13</option>
+          <option>Redmi Note 12</option>
+          <option>Xiaomi 14</option>
+          <option>Xiaomi 14 Ultra</option>
+          <option>POCO X6 Pro</option>
+          <option>POCO F6 Pro</option>
+        </optgroup>
+        <optgroup label="── ASUS ROG Phone ──">
+          <option>ASUS ROG Phone 8 Pro</option>
+          <option>ASUS ROG Phone 8</option>
+          <option>ASUS ROG Phone 7 Ultimate</option>
+          <option>ASUS ROG Phone 7 Pro</option>
+          <option>ASUS ROG Phone 6 Pro</option>
+        </optgroup>
+        <optgroup label="── RedMagic ──">
+          <option>RedMagic 9S Pro</option>
+          <option>RedMagic 9 Pro+</option>
+          <option>RedMagic 9 Pro</option>
+          <option>RedMagic 8S Pro</option>
+          <option>RedMagic 8 Pro</option>
+          <option>RedMagic 7S Pro</option>
+          <option>RedMagic 6S Pro</option>
+          <option>RedMagic 11 Pro</option>
+        </optgroup>
+        <optgroup label="── Samsung ──">
+          <option>Samsung Galaxy S25 Ultra</option>
+          <option>Samsung Galaxy S25+</option>
+          <option>Samsung Galaxy S24 FE</option>
+          <option>Samsung Galaxy A56</option>
+          <option>Samsung Galaxy A36</option>
+          <option>Samsung Galaxy A16</option>
+        </optgroup>
+        <optgroup label="── OnePlus ──">
+          <option>OnePlus 13R</option>
+          <option>OnePlus 13</option>
+          <option>OnePlus 12R</option>
+          <option>OnePlus Ace 3V</option>
+        </optgroup>
+        <optgroup label="── Realme ──">
+          <option>Realme GT 6</option>
+          <option>Realme GT Neo 6</option>
+          <option>Realme 13 Pro+</option>
+          <option>Realme C65</option>
+        </optgroup>
+        <optgroup label="── vivo / iQOO ──">
+          <option>vivo X200 Pro</option>
+          <option>iQOO Z9 Turbo</option>
+          <option>iQOO 12</option>
+        </optgroup>
+        <optgroup label="── OPPO ──">
+          <option>OPPO Find X8 Pro</option>
+          <option>OPPO Reno 12 Pro</option>
+          <option>OPPO A60</option>
+        </optgroup>
+        <optgroup label="── iPhone ──">
+          <option>iPhone 16 Pro Max</option>
+          <option>iPhone 16 Pro</option>
+          <option>iPhone 15 Pro Max</option>
+          <option>iPhone 14 Pro</option>
+        </optgroup>
+        <optgroup label="── Other ──">
+          <option>Other / Custom</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <!-- DPI CONTROL -->
+    <div class="section">
+      <div class="section-title">▌ DPI CONTROL</div>
+      <div class="dpi-display">
+        <div class="dpi-number" id="dpiDisplay">800</div>
+        <div class="dpi-label">D P I</div>
+      </div>
+      <input type="range" min="400" max="1440" value="800" step="10"
+             oninput="document.getElementById('dpiDisplay').textContent=this.value"
+             style="margin-top:12px;">
+      <div style="display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:6px;">
+        <span>400</span><span>700</span><span>1000</span><span>1200</span><span>1440</span>
+      </div>
+    </div>
+
+    <button class="btn-enter-game" onclick="showToast('🎮 กำลังเข้าเกม Free Fire...')">
+      🎮 เข้าเกม FREE FIRE
+      <span>( Free Fire / Free Fire Max )</span>
+    </button>
+
+  </div>
+
+  <!-- ===== AIM HELPER TAB ===== -->
+  <div id="tab-aimhelper" class="tab-content">
+
+    <div class="section aim-helper-section">
+      <div class="section-title">▌ AIM HELPER — เลือกระดับ</div>
+
+      <div class="aim-level-grid">
+
+        <!-- Level 1 -->
+        <div class="aim-level-btn selected" id="aimLv1" onclick="selectAimLevel(1)">
+          <div class="mannequin">
+            <svg class="mannequin-svg" viewBox="0 0 48 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Body -->
+              <circle cx="24" cy="8" r="7" fill="#4a6f8a" stroke="#5a8099" stroke-width="1"/>
+              <rect x="16" y="18" width="16" height="22" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <rect x="8" y="18" width="8" height="18" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <rect x="32" y="18" width="8" height="18" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <rect x="17" y="40" width="7" height="24" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <rect x="24" y="40" width="7" height="24" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <!-- Aim circle: HEAD -->
+              <circle cx="24" cy="8" r="9" stroke="#ff3355" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.9"/>
+              <circle cx="24" cy="8" r="3" fill="rgba(255,51,85,0.3)"/>
+            </svg>
+          </div>
+          <div class="lv-label">LV.1</div>
+          <div class="lv-desc">วงกลม<br>ตรงหัว</div>
+        </div>
+
+        <!-- Level 2 -->
+        <div class="aim-level-btn" id="aimLv2" onclick="selectAimLevel(2)">
+          <div class="mannequin">
+            <svg class="mannequin-svg" viewBox="0 0 48 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="24" cy="8" r="7" fill="#4a6f8a" stroke="#5a8099" stroke-width="1"/>
+              <rect x="16" y="18" width="16" height="22" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <rect x="8" y="18" width="8" height="18" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <rect x="32" y="18" width="8" height="18" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <rect x="17" y="40" width="7" height="24" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <rect x="24" y="40" width="7" height="24" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <!-- Aim circle: NECK -->
+              <circle cx="24" cy="17" r="6" stroke="#ffd700" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.9"/>
+              <circle cx="24" cy="17" r="2.5" fill="rgba(255,215,0,0.3)"/>
+            </svg>
+          </div>
+          <div class="lv-label">LV.2</div>
+          <div class="lv-desc">วงกลม<br>ตรงคอ</div>
+        </div>
+
+        <!-- Level 3 -->
+        <div class="aim-level-btn" id="aimLv3" onclick="selectAimLevel(3)">
+          <div class="mannequin">
+            <svg class="mannequin-svg" viewBox="0 0 48 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="24" cy="8" r="7" fill="#4a6f8a" stroke="#5a8099" stroke-width="1"/>
+              <rect x="16" y="18" width="16" height="22" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <rect x="8" y="18" width="8" height="18" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <rect x="32" y="18" width="8" height="18" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <rect x="17" y="40" width="7" height="24" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <rect x="24" y="40" width="7" height="24" rx="3" fill="#2a4a6a" stroke="#3a6080" stroke-width="1"/>
+              <!-- Aim: BODY BELOW NECK TO FEET -->
+              <rect x="5" y="20" width="38" height="58" rx="5" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="3 2" fill="rgba(168,85,247,0.1)" opacity="0.9"/>
+            </svg>
+          </div>
+          <div class="lv-label">LV.3</div>
+          <div class="lv-desc">วงกลม<br>ลำตัว-เท้า</div>
+        </div>
+
+      </div>
+
+      <!-- Aim Helper Intensity -->
+      <div class="slider-row aim-helper-slider">
+        <div class="slider-header">
+          <span class="slider-label" style="color:var(--red);">Aim Helper ความแรง</span>
+          <span class="slider-value" id="val-aimpower" style="background:rgba(255,51,85,0.1);color:var(--red);border-color:rgba(255,51,85,0.3);">50%</span>
+        </div>
+        <input type="range" min="1" max="100" value="50"
+               oninput="updateSlider('aimpower',this.value)"
+               style="background:rgba(255,51,85,0.2);">
+      </div>
+
+    </div>
+
+    <!-- AIM CONTROLS -->
+    <div class="section">
+      <div class="section-title">▌ AIM CONTROLS</div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-label">Aim Lock</span>
+          <span class="toggle-tag tag-cyan" style="font-size:9px;">Precisão avançada</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="tog-aimlock">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-label">No Recoil</span>
+          <span class="toggle-tag tag-green" style="font-size:9px;">Diminui o espalhamento</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="tog-norecoil">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-label">Aim Stabilization</span>
+          <span class="toggle-tag tag-purple" style="font-size:9px;">Mira estabilizada</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="tog-aimstab">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+    </div>
+
+    <button class="btn-enter-game" onclick="showToast('🎮 กำลังเข้าเกม Free Fire...')">
+      🎮 เข้าเกม FREE FIRE
+      <span>( Free Fire / Free Fire Max )</span>
+    </button>
+
+  </div>
+
+  <!-- ===== PROTECT TAB ===== -->
+  <div id="tab-protect" class="tab-content">
+
+    <div class="section">
+      <div class="section-title">▌ SECURITY SHIELD</div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-label">กันแบน</span>
+          <span class="toggle-tag tag-green">ANTI-BAN</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="tog-antiban">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-label">กันดำ</span>
+          <span class="toggle-tag tag-red">ANTI-BLACK</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="tog-antiblack">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-label">กันรายงาน</span>
+          <span class="toggle-tag tag-cyan">ANTI-REPORT</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="tog-antireport">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+    </div>
+
+    <div class="section">
+      <div class="section-title">▌ SHIELD STATUS</div>
+      <div class="shield-status">
+        <div class="status-item">
+          <span class="status-key">THREAT LEVEL</span>
+          <span class="status-val low">LOW</span>
+        </div>
+        <div class="status-divider"></div>
+        <div class="status-item">
+          <span class="status-key">PROTECTION</span>
+          <span class="status-val pct" id="shieldPct">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-enter-game" onclick="showToast('🎮 กำลังเข้าเกม Free Fire...')">
+      🎮 เข้าเกม FREE FIRE
+      <span>( Free Fire / Free Fire Max )</span>
+    </button>
+
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ===== LOGIN =====
+function doLogin() {
+  const user = document.getElementById('inputUser').value.trim();
+  const pass = document.getElementById('inputPass').value.trim();
+  const code = document.getElementById('inputCode').value.trim();
+  const errEl = document.getElementById('loginError');
+
+  if (!user) { errEl.textContent = '⚠ กรุณาใส่ Username'; return; }
+  if (!pass) { errEl.textContent = '⚠ กรุณาใส่ Password'; return; }
+  if (code !== 'VS-O231PM') { errEl.textContent = '⛔ Unlock Code ไม่ถูกต้อง'; return; }
+
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('mainPanel').style.display = 'block';
+  showToast('✅ เข้าสู่ระบบสำเร็จ ยินดีต้อนรับ ' + user);
 }
 
-body{
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#111;
-transition:.3s;
+// Allow Enter key
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('loginOverlay').style.display !== 'none') doLogin();
+});
+
+// ===== TABS =====
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
 }
 
-.light{
-background:#f2f2f2;
+// ===== SLIDER =====
+function updateSlider(id, val) {
+  document.getElementById('val-' + id).textContent = val + '%';
 }
 
-.dark{
-background:#111;
+// ===== AIM LEVEL =====
+function selectAimLevel(lv) {
+  [1,2,3].forEach(n => document.getElementById('aimLv'+n).classList.remove('selected'));
+  document.getElementById('aimLv'+lv).classList.add('selected');
+  const labels = ['','วงกลมตรงหัว','วงกลมตรงคอ','วงกลมลำตัว–เท้า'];
+  showToast('🎯 AIM LV.' + lv + ' — ' + labels[lv]);
 }
 
-.card{
-width:360px;
-padding:20px;
-border-radius:20px;
-background:rgba(255,255,255,.08);
-backdrop-filter:blur(15px);
-border:1px solid rgba(255,255,255,.2);
-color:white;
-box-shadow:0 0 20px rgba(0,0,0,.4);
+// ===== SHIELD PROTECT =====
+function updateShield() {
+  let on = 0;
+  ['antiban','antiblack','antireport'].forEach(id => {
+    if (document.getElementById('tog-'+id).checked) on++;
+  });
+  document.getElementById('shieldPct').textContent = Math.round((on/3)*100) + '%';
 }
 
-.light .card{
-background:white;
-color:black;
+document.querySelectorAll('#tab-protect input[type=checkbox]').forEach(cb => {
+  cb.addEventListener('change', updateShield);
+});
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
 }
-
-.rgb{
-font-size:28px;
-font-weight:bold;
-text-align:center;
-animation:rgb 3s linear infinite;
-margin-bottom:20px;
-}
-
-@keyframes rgb{
-0%{color:red}
-20%{color:orange}
-40%{color:yellow}
-60%{color:lime}
-80%{color:cyan}
-100%{color:magenta}
-}
-
-input,select{
-width:100%;
-padding:12px;
-margin-top:10px;
-border:none;
-border-radius:10px;
-outline:none;
-}
-
-button{
-width:100%;
-padding:12px;
-margin-top:15px;
-border:none;
-border-radius:10px;
-background:#00aaff;
-color:white;
-font-size:16px;
-cursor:pointer;
-}
-
-.panel{
-display:none;
-}
-
-.menu{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin:12px 0;
-padding:12px;
-border-radius:12px;
-background:rgba(255,255,255,.1);
-}
-
-.light .menu{
-background:#ececec;
-}
-
-.switch{
-width:50px;
-height:25px;
-}
-
-.range{
-width:120px;
-}
-
-.status{
-margin-top:10px;
-text-align:center;
-font-weight:bold;
-}
-
-.credit{
-text-align:center;
-margin-top:15px;
-opacity:.8;
-}
-</style></head><body class="dark"><div class="card" id="loginBox"><div class="rgb">Panel TnnLax</div><select id="theme">
-<option value="dark">🌙 ธีมดำ</option>
-<option value="light">☀️ ธีมขาว</option>
-</select><input type="text" placeholder="Username (อะไรก็ได้)">
-<input type="password" placeholder="Password (อะไรก็ได้)">
-<input type="text" id="code" placeholder="Unlock Code"><button onclick="login()">เข้าสู่ระบบ</button>
-
-<div class="status" id="msg"></div></div><div class="card panel" id="panelBox"><div class="rgb">Panel TnnLax</div><div class="menu">
-<span>Aim Assist (UI Demo)</span>
-<input class="range" type="range" min="1" max="100" value="50">
-</div><div class="menu">
-<span>Precision Level</span>
-<input class="range" type="range" min="1" max="100" value="50">
-</div><div class="menu">
-<span>Performance Boost</span>
-<input class="switch" type="checkbox">
-</div><div class="menu">
-<span>Dark Protection</span>
-<input class="switch" type="checkbox">
-</div><div class="menu">
-<span>Safe Mode</span>
-<input class="switch" type="checkbox">
-</div><div class="credit">
-Panel TnnLax v1.0
-</div></div><script>
-function login(){
-
-const code=document.getElementById("code").value.trim();
-const theme=document.getElementById("theme").value;
-
-document.body.className=theme;
-
-if(code==="TNN1"){
-document.getElementById("loginBox").style.display="none";
-document.getElementById("panelBox").style.display="block";
-}else{
-document.getElementById("msg").innerHTML="❌ Unlock Code ไม่ถูกต้อง";
-}
-}
-</script></body>
-        </html>
+</script>
+</body>
+</html>
